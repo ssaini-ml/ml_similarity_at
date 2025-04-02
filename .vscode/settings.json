@@ -1,0 +1,6 @@
+{
+    "python.analysis.extraPaths": [
+        "./Similarity - AT/ml_pipeline_similarity_package",
+        "./Similarity - AT"
+    ]
+}
