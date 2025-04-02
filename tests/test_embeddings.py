@@ -3,7 +3,7 @@ from pyspark.sql import SparkSession
 
 
 
-from ml_pipeline.embeddings  import  compute_embeddings
+from ml_pipeline_similarity_package.ml_pipeline.embeddings  import  compute_embeddings
 
 from pyspark.sql.types import StructType, StructField, StringType
 
