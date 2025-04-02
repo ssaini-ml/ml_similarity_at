@@ -1,7 +1,7 @@
 import unittest
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import col
-from ml_pipeline.processing import process_dataframe
+from ml_pipeline_similarity_package.ml_pipeline.processing import process_dataframe
 from pyspark.sql.functions import initcap, regexp_replace
 
 class TestProcessing(unittest.TestCase):
