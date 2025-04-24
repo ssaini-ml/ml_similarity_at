@@ -1,0 +1,50 @@
+name: Run ML Pipeline
+
+on:
+  workflow_dispatch:
+    inputs:
+      triggered_by:
+        description: 'What triggered this workflow'
+        required: true
+        default: 'manual'
+  repository_dispatch:
+    types: [run_pipeline]
+
+jobs:
+  run-pipeline:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.8'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install -e .
+    
+    - name: Run data loader and pipeline
+      run: |
+        python scripts/run_data_loader.py
+    
+    - name: Upload results
+      uses: actions/upload-artifact@v2
+      with:
+        name: pipeline-results
+        path: data/processed/
+    
+    - name: Create status file
+      run: |
+        echo "completed" > status.txt
+        echo "${{ github.run_id }}" >> status.txt
+    
+    - name: Upload status
+      uses: actions/upload-artifact@v2
+      with:
+        name: status
+        path: status.txt 
