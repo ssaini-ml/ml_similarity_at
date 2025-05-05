@@ -1,0 +1,39 @@
+# Using Python 3.9 as base image
+FROM python:3.9-slim
+
+# Setting  working directory
+WORKDIR /app
+
+# Installing system dependencies
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copying requirements first to leverage Docker cache
+COPY requirements.txt .
+
+# Installing Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copying the rest of the application
+COPY . .
+
+# Creating logs directory
+RUN mkdir -p logs
+
+# Exposing ports for FastAPI and Streamlit
+EXPOSE 8000 8501
+
+# Setting environment variables
+ENV STREAMLIT_SERVER_PORT=8501
+ENV STREAMLIT_SERVER_ADDRESS=0.0.0.0
+ENV PYTHONPATH=/app
+
+# Createing a script to run both applications
+RUN echo '#!/bin/bash\n\
+uvicorn api.main:app --host 0.0.0.0 --port 8000 &\n\
+streamlit run app/streamlit_app.py --server.port 8501 --server.address 0.0.0.0' > /app/start.sh && \
+chmod +x /app/start.sh
+
+# Command to run both applications
+CMD ["/app/start.sh"]

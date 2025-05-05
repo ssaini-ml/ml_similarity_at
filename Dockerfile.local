@@ -1,0 +1,39 @@
+# Use Python 3.9 as base image
+FROM python:3.9-slim
+
+# Setting working directory
+WORKDIR /app
+
+# Installing system dependencies including Java
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    default-jdk \
+    procps \
+    && rm -rf /var/lib/apt/lists/*
+
+# Setting Java environment variables
+ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-arm64
+ENV PATH=$PATH:$JAVA_HOME/bin
+
+# Copying requirements first to leverage Docker cache
+COPY requirements.txt .
+
+# Installing Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copying the rest of the application
+COPY . .
+
+# Creating logs directory
+RUN mkdir -p logs
+
+# Setting environment variables
+ENV PYTHONPATH=/app
+
+# Creating a script to run the pipeline
+RUN echo '#!/bin/bash\n\
+python scripts/run_pipeline.py' > /app/start_pipeline.sh && \
+chmod +x /app/start_pipeline.sh
+
+# Command to run the pipeline
+CMD ["/app/start_pipeline.sh"] 
