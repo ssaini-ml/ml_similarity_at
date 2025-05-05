@@ -24,7 +24,7 @@ A Streamlit-based machine learning application that provides text similarity and
 1. Clone the repository:
 ```bash
 git clone <repository-url>
-cd ml_similarity_at-main
+cd ml_similarity_at
 ```
 
 2. Create and activate a virtual environment:
@@ -109,24 +109,137 @@ docker stop <container_id>
 ## Project Structure
 
 ```
-ml_similarity_at-main/
-├── app/
-│   └── streamlit_app.py      # Main Streamlit application
-├── api/
-│   └── main.py              # FastAPI backend
-├── data/
-│   └── raw/
-│       └── products.csv
-├── scripts/
-│   ├── run_pipeline.py      # Spark pipeline for Linux
-│   └── run_pipeline_pandas.py # Pandas pipeline for Windows/macOS
-├── logs/
-├── requirements.txt         # Python dependencies
-├── Dockerfile.streamlit    # Production Docker configuration
-├── Dockerfile.local       # Development Docker configuration
-├── run_app_local.py      # Local development runner with OS detection
-└── README.md
+ml_similarity_at/
+├── app/                      # Streamlit application
+│   ├── data_loader/         # Data loading utilities
+│   ├── model/              # Model components
+│   └── streamlit_app.py    # Main Streamlit interface
+├── api/                     # FastAPI backend
+│   └── main.py            # API endpoints and logic
+├── src/                     # Core source code
+│   ├── api/               # API implementation
+│   ├── app/              # Application logic
+│   ├── config.py         # Configuration settings
+│   ├── data_loader/      # Data loading modules
+│   ├── features/         # Feature engineering
+│   ├── model/           # Model implementations
+│   ├── pipeline/        # Pipeline components
+│   └── run_streamlit_app.py
+├── scripts/                # Utility scripts
+│   ├── run_data_loader.py
+│   ├── run_ml_pipeline.py
+│   ├── run_pipeline.py
+│   ├── run_pipeline_pandas.py
+│   └── setup_data.py
+├── data/                   # Data directory
+│   └── raw/              # Raw data files
+├── logs/                   # Log files
+├── notebooks/             # Jupyter notebooks
+├── tests/                 # Test files
+├── ml_pipeline_similarity/ # Package directory
+├── requirements.txt        # Python dependencies
+├── setup.py               # Package setup
+├── Dockerfile.local       # Development Dockerfile
+├── Dockerfile.streamlit   # Production Dockerfile
+└── run_app_local.py       # Local development runner
 ```
+
+## Features
+
+- Interactive Streamlit interface for text similarity analysis
+- FastAPI backend for programmatic access
+- CSV file processing and visualization
+- Real-time recommendations
+- Comprehensive logging
+- OS-specific pipeline selection (Pandas/Spark)
+- Docker support for both development and production
+- JWT-based authentication
+- Model caching for improved performance
+- Data processing and embedding generation
+- Test suite for core functionality
+
+## Setup
+
+1. Clone the repository:
+```bash
+git clone https://github.com/ssaini-ml/ml_similarity_at.git
+cd ml_similarity_at
+```
+
+2. Create and activate a virtual environment:
+```bash
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+```
+
+3. Install dependencies:
+```bash
+pip install -r requirements.txt
+```
+
+4. Set up data directory:
+```bash
+python scripts/setup_data.py
+```
+
+## Running the Application
+
+### Local Development
+
+Run the application with automatic OS detection:
+```bash
+python run_app_local.py
+```
+
+This will:
+- Detect your operating system
+- Choose the appropriate pipeline (Pandas for Windows/macOS, Spark for Linux)
+- Start the FastAPI backend
+- Launch the Streamlit interface
+
+### Docker Development
+
+Build and run the development container:
+```bash
+docker build -f Dockerfile.local -t ml-similarity-local .
+docker run -p 8501:8501 -p 8000:8000 ml-similarity-local
+```
+
+### Docker Production
+
+Build and run the production container:
+```bash
+docker build -f Dockerfile.streamlit -t ml-similarity-prod .
+docker run -p 8501:8501 -p 8000:8000 ml-similarity-prod
+```
+
+## Access Points
+
+- Streamlit UI: http://localhost:8501
+- FastAPI Backend: http://localhost:8000
+- API Documentation: http://localhost:8000/docs
+
+## API Endpoints
+
+- `POST /process`: Compute similarity for single text entries
+- `POST /process_csv`: Process uploaded CSV file for similarity
+- `POST /process_source_csv`: Process the source CSV file for similarity
+- `GET /health`: Check API health
+
+## Data Processing Flow
+
+1. **Data Loading**: `scripts/run_data_loader.py`
+   - Loads raw text data
+   - Performs text cleaning
+   - Saves processed data
+
+2. **Similarity Pipeline**: Choose one of:
+   - Pandas pipeline for quick similarity computation
+   - Spark pipeline for large-scale similarity analysis
+   - Auto-select for convenience
+
+
+
 
 
 
